@@ -9,7 +9,7 @@ import 'screens/category/provider/category_provider.dart';
 import 'screens/main/main_screen.dart';
 import 'screens/main/provider/main_screen_provider.dart';
 import 'utility/constants.dart';
-//import '../../../Ecommerce/ecom_startup_code/client_side/admin_panal_startup/lib/utility/extensions.dart';
+import '../../../utility/extensions.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Admin Panel',
+      title: 'Admin Panel',
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: bgColor,
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme).apply(bodyColor: Colors.white),
