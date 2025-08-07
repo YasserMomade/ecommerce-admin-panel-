@@ -1,3 +1,3 @@
 # admin
 
-Ecommerce add_ admin part
+Ecommerce admin part
