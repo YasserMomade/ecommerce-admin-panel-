@@ -29,7 +29,7 @@ class ProductSubmitForm extends StatelessWidget {
           width: size.width * 0.7,
           padding: EdgeInsets.all(defaultPadding),
           decoration: BoxDecoration(
-            color: bgColor,
+            color:  Colors.white,
             borderRadius: BorderRadius.circular(12.0),
           ),
           child: Column(
@@ -340,7 +340,7 @@ void showAddProductForm(BuildContext context, Product? product) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        backgroundColor: bgColor,
+        backgroundColor:  Colors.white,
         title: Center(child: Text('Add Product'.toUpperCase(), style: TextStyle(color: primaryColor))),
         content: ProductSubmitForm(product: product),
       );

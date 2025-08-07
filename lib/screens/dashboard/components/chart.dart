@@ -11,41 +11,60 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 200,
-      child: Stack(
-        children: [
-          PieChart(
-            PieChartData(
-              sectionsSpace: 0,
-              centerSpaceRadius: 70,
-              startDegreeOffset: -90,
-              sections: _buildPieChartSelectionData(context),
-            ),
-          ),
-          Positioned.fill(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: defaultPadding),
-                Consumer<DataProvider>(
-                  builder: (context, dataProvider, child) {
-                    return Text(
-                      '${0}', //TODO: should complete Make this order number dynamic bt calling calculateOrdersWithStatus
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        height: 0.5,
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: defaultPadding),
-                Text("Order")
-              ],
-            ),
+    return Container(
+      padding: EdgeInsets.all(defaultPadding),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 12,
+            offset: Offset(0, 6),
           ),
         ],
+      ),
+      child: SizedBox(
+        height: 220,
+        child: Stack(
+          children: [
+            PieChart(
+              PieChartData(
+                sectionsSpace: 0,
+                centerSpaceRadius: 60,
+                startDegreeOffset: -90,
+                sections: _buildPieChartSelectionData(context),
+              ),
+            ),
+            Positioned.fill(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Consumer<DataProvider>(
+                    builder: (context, dataProvider, child) {
+                      return Text(
+                        '${0}', // TODO: should complete Make this order number dynamic by calling calculateOrdersWithStatus
+                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                          color: primaryColor,
+                          fontWeight: FontWeight.bold,
+                          height: 0.5,
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Orders",
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -53,7 +72,7 @@ class Chart extends StatelessWidget {
   List<PieChartSectionData> _buildPieChartSelectionData(BuildContext context) {
     final DataProvider dataProvider = Provider.of<DataProvider>(context);
 
-    //TODO: should complete Make this order number dynamic bt calling calculateOrdersWithStatus
+    // TODO: should complete Make this order number dynamic by calling calculateOrdersWithStatus
     int totalOrder = 0;
     int pendingOrder = 0;
     int processingOrder = 0;
@@ -61,40 +80,37 @@ class Chart extends StatelessWidget {
     int shippedOrder = 0;
     int deliveredOrder = 0;
 
-    List<PieChartSectionData> pieChartSelectionData = [
+    return [
       PieChartSectionData(
-        color: Color(0xFFFFCF26),
+        color: Color(0xFFB4D8F7),
         value: pendingOrder.toDouble(),
         showTitle: false,
-        radius: 20,
+        radius: 22,
       ),
       PieChartSectionData(
-        color: Color(0xFFEE2727),
+        color: Color(0xFF98C1E0),
         value: cancelledOrder.toDouble(),
         showTitle: false,
-        radius: 20,
+        radius: 22,
       ),
       PieChartSectionData(
-        color: Color(0xFF2697FF),
+        color: Color(0xFF72A7D1),
         value: shippedOrder.toDouble(),
         showTitle: false,
-        radius: 20,
+        radius: 22,
       ),
       PieChartSectionData(
-        color: Color(0xFF26FF31),
+        color: Color(0xFF4D8DC2),
         value: deliveredOrder.toDouble(),
         showTitle: false,
-        radius: 20,
+        radius: 22,
       ),
       PieChartSectionData(
-        color: Colors.white,
+        color: Color(0xFF2974B3),
         value: processingOrder.toDouble(),
         showTitle: false,
-        radius: 20,
+        radius: 22,
       ),
     ];
-
-    return pieChartSelectionData;
   }
 }
-

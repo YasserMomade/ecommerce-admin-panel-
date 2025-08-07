@@ -1,3 +1,5 @@
+import 'package:admin/utility/snack_bar_helper.dart';
+
 import '../../models/api_response.dart';
 import '../../models/coupon.dart';
 import '../../models/my_notification.dart';
@@ -59,13 +61,52 @@ class DataProvider extends ChangeNotifier {
   List<MyNotification> _filteredNotifications = [];
   List<MyNotification> get notifications => _filteredNotifications;
 
-  DataProvider() {}
+  DataProvider() {
+    getAllcategory();
+  }
 
 
   //TODO: should complete getAllCategory
 
+  Future<List<Category>> getAllcategory({bool showSnack = false}) async{
+
+    try{
+      Response response = await service.getItems(endpointUrl: 'categories');
+
+      if(response.isOk){
+        ApiResponse<List<Category>> apiResponse = ApiResponse<List<Category>>.fromJson(
+          response.body,
+            (json) => (json as List).map((item) => Category.fromJson(item)).toList(),
+        );
+        _allCategories = apiResponse.data ?? [];
+        _filteredCategories = List.from(_allCategories);
+        notifyListeners();
+        if(showSnack) SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+      }
+
+    } catch(e){
+      if (showSnack) SnackBarHelper.showErrorSnackBar(e.toString());
+      rethrow;
+    }
+
+    return _filteredCategories;
+
+  }
 
   //TODO: should complete filterCategories
+
+  void filterCategories(String keyword) {
+
+    if(keyword.isEmpty){
+      _filteredCategories = List.from(_allCategories);
+    }else{
+      final loweKeyword = keyword.toLowerCase();
+      _filteredCategories = _allCategories.where((category){
+        return (category.name ?? '').toLowerCase().contains(loweKeyword);
+      }).toList();
+    }
+    notifyListeners();
+  }
 
   //TODO: should complete getAllSubCategory
 

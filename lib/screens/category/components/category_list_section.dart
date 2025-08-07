@@ -1,3 +1,5 @@
+import 'package:admin/utility/extensions.dart';
+
 import '../../../core/data/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,102 +8,185 @@ import '../../../models/category.dart';
 import 'add_category_form.dart';
 
 class CategoryListSection extends StatelessWidget {
-  const CategoryListSection({
-    Key? key,
-  }) : super(key: key);
+  const CategoryListSection({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(defaultPadding),
+      width: double.infinity,
+      padding: const EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
-        color: secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.blueGrey.shade100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blueGrey.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "All Categories",
-            style: Theme.of(context).textTheme.titleMedium,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF11182C),
+            ),
           ),
-          SizedBox(
-            width: double.infinity,
-            child: Consumer<DataProvider>(
-              builder: (context, dataProvider, child) {
-                return DataTable(
-                  columnSpacing: defaultPadding,
-                  // minWidth: 600,
-                  columns: [
-                    DataColumn(
-                      label: Text("Category Name"),
+          const SizedBox(height: defaultPadding),
+          _buildTableHeader(),
+          const SizedBox(height: 8),
+          Consumer<DataProvider>(
+            builder: (context, dataProvider, child) {
+              final categories = dataProvider.categories;
+              if (categories.isEmpty) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(defaultPadding),
+                    child: Text(
+                      'No categories available.',
+                      style: TextStyle(color: Colors.grey),
                     ),
-                    DataColumn(
-                      label: Text("Added Date"),
-                    ),
-                    DataColumn(
-                      label: Text("Edit"),
-                    ),
-                    DataColumn(
-                      label: Text("Delete"),
-                    ),
-                  ],
-                  rows: List.generate(
-                    dataProvider.categories.length,
-                    (index) => categoryDataRow(dataProvider.categories[index], delete: () {
-                      //TODO: should complete call  deleteCategory
-                    }, edit: () {
-                      showAddCategoryForm(context, dataProvider.categories[index]);
-                    }),
                   ),
                 );
-              },
+              }
+
+              return Column(
+                children: List.generate(
+                  categories.length,
+                      (index) => _buildCategoryRow(
+                    context,
+                    category: categories[index],
+                    onEdit: () {
+                      showAddCategoryForm(context, categories[index]);
+                    },
+                    onDelete: () {
+                      context.categoryProvider.deleteCategory(categories[index]);
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTableHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A4DA3),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: const [
+          Expanded(
+            flex: 3,
+            child: Text("Category Name",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text("Added Date",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            child: Text("Edit",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            child: Text("Delete",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryRow(
+      BuildContext context, {
+        required Category category,
+        required VoidCallback onEdit,
+        required VoidCallback onDelete,
+      }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.blueGrey.shade100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blueGrey.withOpacity(0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.network(
+                    category.image ?? '',
+                    height: 36,
+                    width: 36,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.broken_image,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  category.name ?? '',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              category.createdAt ?? '',
+              style: const TextStyle(color: Colors.black54),
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: IconButton(
+                icon: const Icon(Icons.edit, color: Colors.indigo),
+                onPressed: onEdit,
+                tooltip: "Edit category",
+              ),
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: onDelete,
+                tooltip: "Delete category",
+              ),
             ),
           ),
         ],
       ),
     );
   }
-}
-
-DataRow categoryDataRow(Category CatInfo, {Function? edit, Function? delete}) {
-  return DataRow(
-    cells: [
-      DataCell(
-        Row(
-          children: [
-            Image.network(
-              CatInfo.image ?? '',
-              height: 30,
-              width: 30,
-              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                return Icon(Icons.error);
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-              child: Text(CatInfo.name ?? ''),
-            ),
-          ],
-        ),
-      ),
-      DataCell(Text(CatInfo.createdAt ?? '')),
-      DataCell(IconButton(
-          onPressed: () {
-            if (edit != null) edit();
-          },
-          icon: Icon(
-            Icons.edit,
-            color: Colors.white,
-          ))),
-      DataCell(IconButton(
-          onPressed: () {
-            if (delete != null) delete();
-          },
-          icon: Icon(
-            Icons.delete,
-            color: Colors.red,
-          ))),
-    ],
-  );
 }

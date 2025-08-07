@@ -14,18 +14,25 @@ class OrderDetailsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DataProvider>(
       builder: (context, dataProvider, child) {
-        //TODO: should complete Make this order number dynamic bt calling calculateOrdersWithStatus
         int totalOrder = 0;
         int pendingOrder = 0;
         int processingOrder = 0;
         int cancelledOrder = 0;
         int shippedOrder = 0;
         int deliveredOrder = 0;
+
         return Container(
           padding: EdgeInsets.all(defaultPadding),
           decoration: BoxDecoration(
-            color: secondaryColor,
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            color: Colors.blue.shade50,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.blue.withOpacity(0.1),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,8 +40,9 @@ class OrderDetailsSection extends StatelessWidget {
               Text(
                 "Orders Details",
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade900,
                 ),
               ),
               SizedBox(height: defaultPadding),

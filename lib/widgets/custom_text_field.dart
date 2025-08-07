@@ -24,6 +24,10 @@ class CustomTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
+        style: const TextStyle(
+          color: Colors.black, // Altere para a cor desejada
+          fontSize: 16,
+        ),
         controller: controller,
         maxLines: lineNumber,
         decoration: InputDecoration(

@@ -40,13 +40,13 @@ class CategoryImageCard extends StatelessWidget {
                       ? Image.network(
                           imageFile?.path ?? '',
                           width: double.infinity,
-                          height: 80,
+                          height: 140,
                           fit: BoxFit.cover,
                         )
                       : Image.file(
                           imageFile!,
                           width: double.infinity,
-                          height: 80,
+                          height: 140,
                           fit: BoxFit.cover,
                         ),
                 )
@@ -56,7 +56,7 @@ class CategoryImageCard extends StatelessWidget {
                   child: Image.network(
                     imageUrlForUpdateImage ?? '',
                     width: double.infinity,
-                    height: 80,
+                    height: 140,
                     fit: BoxFit.cover,
                   )
                 )

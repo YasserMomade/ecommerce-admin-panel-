@@ -15,54 +15,51 @@ class ProductListSection extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
-        color: secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "All Products",
-            style: Theme
-                .of(context)
-                .textTheme
-                .titleMedium,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
+          SizedBox(height: defaultPadding),
           SizedBox(
             width: double.infinity,
             child: Consumer<DataProvider>(
               builder: (context, dataProvider, child) {
                 return DataTable(
-                  columnSpacing: defaultPadding,
-                  // minWidth: 600,
+                  columnSpacing: defaultPadding * 1.5,
+                  horizontalMargin: defaultPadding,
+                  headingRowColor: MaterialStateColor.resolveWith((states) => Colors.grey.shade100),
                   columns: [
-                    DataColumn(
-                      label: Text("Product Name"),
-                    ),
-                    DataColumn(
-                      label: Text("Category"),
-                    ),
-                    DataColumn(
-                      label: Text("Sub Category"),
-                    ),
-                    DataColumn(
-                      label: Text("Price"),
-                    ),
-                    DataColumn(
-                      label: Text("Edit"),
-                    ),
-                    DataColumn(
-                      label: Text("Delete"),
-                    ),
+                    DataColumn(label: Text("Product Name")),
+                    DataColumn(label: Text("Category")),
+                    DataColumn(label: Text("Sub Category")),
+                    DataColumn(label: Text("Price")),
+                    DataColumn(label: Text("Edit")),
+                    DataColumn(label: Text("Delete")),
                   ],
                   rows: List.generate(
                     dataProvider.products.length,
-                        (index) => productDataRow(dataProvider.products[index],edit: () {
-                          showAddProductForm(context, dataProvider.products[index]);
-                        },
-                          delete: () {
-                            //TODO: should complete call deleteProduct
-                          },),
+                        (index) => productDataRow(
+                      dataProvider.products[index],
+                      edit: () {
+                        showAddProductForm(context, dataProvider.products[index]);
+                      },
+                      delete: () {
+// TODO: should complete call deleteProduct
+                      },
+                    ),
                   ),
                 );
               },
@@ -74,46 +71,53 @@ class ProductListSection extends StatelessWidget {
   }
 }
 
-DataRow productDataRow(Product productInfo,{Function? edit, Function? delete}) {
+DataRow productDataRow(Product productInfo, {Function? edit, Function? delete}) {
   return DataRow(
     cells: [
       DataCell(
         Row(
           children: [
-            Image.network(
-              productInfo.images?.first.url ?? '',
-              height: 30,
-              width: 30,
-              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                return Icon(Icons.error);
-              },
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Image.network(
+                productInfo.images?.first.url ?? '',
+                height: 30,
+                width: 30,
+                fit: BoxFit.cover,
+                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                  return Icon(Icons.broken_image, color: Colors.grey);
+                },
+              ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-              child: Text(productInfo.name ?? ''),
+            SizedBox(width: defaultPadding),
+            Flexible(
+              child: Text(
+                productInfo.name ?? '',
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),
       ),
-      DataCell(Text(productInfo.proCategoryId?.name ?? '')),
-      DataCell(Text(productInfo.proSubCategoryId?.name ?? '')),
-      DataCell(Text('${productInfo.price}'),),
-      DataCell(IconButton(
+      DataCell(Text(productInfo.proCategoryId?.name ?? '-')),
+      DataCell(Text(productInfo.proSubCategoryId?.name ?? '-')),
+      DataCell(Text('${productInfo.price}')),
+      DataCell(
+        IconButton(
           onPressed: () {
             if (edit != null) edit();
           },
-          icon: Icon(
-            Icons.edit,
-            color: Colors.white,
-          ))),
-      DataCell(IconButton(
+          icon: Icon(Icons.edit, color: Colors.blue),
+        ),
+      ),
+      DataCell(
+        IconButton(
           onPressed: () {
             if (delete != null) delete();
           },
-          icon: Icon(
-            Icons.delete,
-            color: Colors.red,
-          ))),
+          icon: Icon(Icons.delete, color: Colors.redAccent),
+        ),
+      ),
     ],
   );
 }

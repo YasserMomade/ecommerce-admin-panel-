@@ -19,40 +19,49 @@ class OrderInfoCard extends StatelessWidget {
       margin: EdgeInsets.only(top: defaultPadding),
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
-        border: Border.all(width: 2, color: primaryColor.withOpacity(0.15)),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(defaultPadding),
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blue.withOpacity(0.15),
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          SizedBox(
-            height: 20,
-            width: 20,
+          Container(
+            height: 40,
+            width: 40,
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade100,
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: SvgPicture.asset(svgSrc),
           ),
+          SizedBox(width: defaultPadding),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: Colors.black87,
                   ),
-                  Text(
-                    "$totalOrder Files",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: Colors.white70),
-                  ),
-                ],
-              ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  "$totalOrder Files",
+                  style: TextStyle(color: Colors.blueGrey, fontSize: 12),
+                ),
+              ],
             ),
-          ),
+          )
         ],
       ),
     );

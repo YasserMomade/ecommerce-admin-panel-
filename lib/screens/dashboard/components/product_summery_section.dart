@@ -17,8 +17,7 @@ class ProductSummerySection extends StatelessWidget {
     return Consumer<DataProvider>(
       builder: (context, dataProvider, _) {
         int totalProduct = 1;
-        //TODO: should complete Make this product number dynamic bt calling calculateProductWithQuantity
-        totalProduct = 1;
+        // TODO: should complete Make this product number dynamic by calling calculateProductWithQuantity
         int outOfStockProduct = 0;
         int limitedStockProduct = 0;
         int otherStockProduct = totalProduct - outOfStockProduct - limitedStockProduct;
@@ -54,26 +53,36 @@ class ProductSummerySection extends StatelessWidget {
           ),
         ];
 
-        return Column(
-          children: [
-            GridView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: productSummeryItems.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: defaultPadding,
-                mainAxisSpacing: defaultPadding,
-                childAspectRatio: _size.width < 1400 ? 1.1 : 1.4,
+        return Container(
+          padding: EdgeInsets.all(defaultPadding),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8,
+                offset: Offset(0, 4),
               ),
-              itemBuilder: (context, index) => ProductSummeryCard(
-                info: productSummeryItems[index],
-                onTap: (productType) {
-                  //TODO: should complete call filterProductsByQuantity
-                },
-              ),
+            ],
+          ),
+          child: GridView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: productSummeryItems.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: defaultPadding,
+              mainAxisSpacing: defaultPadding,
+              childAspectRatio: _size.width < 1400 ? 1.1 : 1.4,
             ),
-          ],
+            itemBuilder: (context, index) => ProductSummeryCard(
+              info: productSummeryItems[index],
+              onTap: (productType) {
+                // TODO: should complete call filterProductsByQuantity
+              },
+            ),
+          ),
         );
       },
     );

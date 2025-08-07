@@ -13,15 +13,19 @@ class DashBoardHeader extends StatelessWidget {
       children: [
         Text(
           "Dashboard",
-          style: Theme.of(context).textTheme.titleLarge,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: primaryColor,
+          ),
         ),
         Spacer(flex: 1),
         Expanded(
-            child: SearchField(
-          onChange: (val) {
-            //TODO: should complete call filterProducts
-          },
-        )),
+          child: SearchField(
+            onChange: (val) {
+              //TODO: should complete call filterProducts
+            },
+          ),
+        ),
         ProfileCard()
       ],
     );
@@ -42,19 +46,31 @@ class ProfileCard extends StatelessWidget {
         vertical: defaultPadding / 2,
       ),
       decoration: BoxDecoration(
-        color: secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        border: Border.all(color: Colors.white10),
+        color: Colors.white,
+        borderRadius: const BorderRadius.all(Radius.circular(20)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Image.asset(
-            "assets/images/profile_pic.png",
-            height: 38,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.asset(
+              "assets/images/profile_pic.png",
+              height: 38,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-            child: Text("Angelina Jolie"),
+            child: Text(
+              "Yasmin Momade",
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
           ),
           Icon(Icons.keyboard_arrow_down),
         ],
@@ -76,11 +92,15 @@ class SearchField extends StatelessWidget {
     return TextField(
       decoration: InputDecoration(
         hintText: "Search",
-        fillColor: secondaryColor,
+        fillColor: Colors.white,
         filled: true,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+        ),
+        prefixIcon: Padding(
+          padding: const EdgeInsets.all(defaultPadding * 0.75),
+          child: SvgPicture.asset("assets/icons/Search.svg"),
         ),
         suffixIcon: InkWell(
           onTap: () {},
@@ -89,9 +109,9 @@ class SearchField extends StatelessWidget {
             margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
             decoration: BoxDecoration(
               color: primaryColor,
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              borderRadius: const BorderRadius.all(Radius.circular(15)),
             ),
-            child: SvgPicture.asset("assets/icons/Search.svg"),
+            child: Icon(Icons.search, color: Colors.white),
           ),
         ),
       ),
