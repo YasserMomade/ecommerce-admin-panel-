@@ -156,6 +156,13 @@ class SubCategoryListSection extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
+              subCategories.categoryId?.name ?? '',
+              style: const TextStyle(color: Colors.black54),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
               subCategories.createdAt ?? '',
               style: const TextStyle(color: Colors.black54),
             ),

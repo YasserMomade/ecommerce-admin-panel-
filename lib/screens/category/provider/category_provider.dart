@@ -73,8 +73,6 @@ updateCategory() async {
       };
 
       final FormData form = await createFormData(imgXFile: imgXFile, formData: formDataMap);
-
-
       final response = await service.updateItem(endpointUrl: 'categories', itemData: form, itemId: categoryForUpdate?.sId ?? '');
 
       if(response.isOk){

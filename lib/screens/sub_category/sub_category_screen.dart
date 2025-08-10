@@ -9,14 +9,16 @@ import 'components/sub_category_list_section.dart';
 class SubCategoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return  SafeArea(
+    return SafeArea(
       child: SingleChildScrollView(
+
         primary: false,
         padding: EdgeInsets.all(defaultPadding),
         child: Column(
+
           children: [
             SubCategoryHeader(),
-            Gap(defaultPadding),
+            SizedBox(height: defaultPadding),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -26,38 +28,41 @@ class SubCategoryScreen extends StatelessWidget {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "My Sub Categories",
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .titleMedium,
+                        children:[
+                          Text("My Subcategories",
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blueGrey[900],
                             ),
                           ),
-                          ElevatedButton.icon(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: defaultPadding * 1.5,
-                                vertical:
-                                defaultPadding,
+                          Row(
+                            children:[
+                              ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: defaultPadding * 1.5,
+                                    vertical: defaultPadding,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),),
+                                onPressed: () {
+                                  showAddSubCategoryForm(context, null);
+                                },
+                                icon: Icon(Icons.add),
+                                label: Text("Add New"),
                               ),
-                            ),
-                            onPressed: () {
-                              showAddSubCategoryForm(context,null);
-                            },
-                            icon: Icon(Icons.add),
-                            label: Text("Add New"),
-                          ),
-                          Gap(20),
-                          IconButton(
-                              onPressed: () {
-                                //TODO: should complete call getAllSubCategory
-                              },
-                              icon: Icon(Icons.refresh)),
-                        ],
-                      ),
+                              Gap(10),
+                              IconButton(
+                                onPressed: () {
+                                  // todo
+                                },
+                                icon: Icon(Icons.refresh, color: Colors.blueGrey[900]),
+                              ),
+                            ],
+                          )],),
                       Gap(defaultPadding),
                       SubCategoryListSection(),
                     ],

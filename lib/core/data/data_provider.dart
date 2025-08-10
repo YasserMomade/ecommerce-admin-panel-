@@ -63,10 +63,11 @@ class DataProvider extends ChangeNotifier {
 
   DataProvider() {
     getAllcategory();
+    getAllSubcategory();
   }
 
 
-  //TODO: should complete getAllCategory
+  //getAllCategory
 
   Future<List<Category>> getAllcategory({bool showSnack = false}) async{
 
@@ -93,7 +94,7 @@ class DataProvider extends ChangeNotifier {
 
   }
 
-  //TODO: should complete filterCategories
+  //filterCategories
 
   void filterCategories(String keyword) {
 
@@ -108,11 +109,47 @@ class DataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //TODO: should complete getAllSubCategory
+  // getAllSubCategory
 
+  Future<List<SubCategory>> getAllSubcategory({bool showSnack = false}) async{
 
-  //TODO: should complete filterSubCategories
+    try{
+      Response response = await service.getItems(endpointUrl: 'subCategories');
 
+      if(response.isOk){
+        ApiResponse<List<SubCategory>> apiResponse = ApiResponse<List<SubCategory>>.fromJson(
+          response.body,
+              (json) => (json as List).map((item) => SubCategory.fromJson(item)).toList(),
+        );
+        _allSubCategories = apiResponse.data ?? [];
+        _filteredSubCategories = List.from(_allSubCategories);
+        notifyListeners();
+        if(showSnack) SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+      }
+
+    } catch(e){
+      if (showSnack) SnackBarHelper.showErrorSnackBar(e.toString());
+      rethrow;
+    }
+
+    return _filteredSubCategories;
+
+  }
+
+  //filterSubCategories
+
+  void filterSubCategories(String keyword) {
+
+    if(keyword.isEmpty){
+      _filteredCategories = List.from(_allSubCategories);
+    }else{
+      final loweKeyword = keyword.toLowerCase();
+      _filteredSubCategories = _allSubCategories.where((subcategory){
+        return (subcategory.name ?? '').toLowerCase().contains(loweKeyword);
+      }).toList();
+    }
+    notifyListeners();
+  }
 
   //TODO: should complete getAllBrands
 
