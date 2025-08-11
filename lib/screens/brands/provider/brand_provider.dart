@@ -1,9 +1,13 @@
+import 'dart:developer';
+
+import '../../../models/api_response.dart';
 import '../../../models/brand.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import '../../../core/data/data_provider.dart';
 import '../../../models/sub_category.dart';
 import '../../../services/http_services.dart';
+import '../../../utility/snack_bar_helper.dart';
 
 
 class BrandProvider extends ChangeNotifier {
@@ -23,18 +27,110 @@ class BrandProvider extends ChangeNotifier {
 
 
 
-  //TODO: should complete addBrand
+  addBrand() async{
+
+    try {
+
+      Map<String, dynamic> brand = {
+        'name': brandNameCtrl.text,
+        'subcategoryId': selectedSubCategory?.sId,
+      };
+
+      final response = await service.addItem(endpointUrl: 'brands', itemData: brand);
+
+      if(response.isOk){
+        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+
+        if(apiResponse.success == true){
+          clearFields();
+          SnackBarHelper.showSuccessSnackBar('${apiResponse.message}');
+          _dataProvider.getAllBrands();
+          log('Brand added');
+        }else {
+          SnackBarHelper.showErrorSnackBar(
+              'Failed to add Brand: ${apiResponse.message}');
+        }
+      }else{
+        SnackBarHelper.showErrorSnackBar('Error ${response.body?['message'] ?? response.statusText}');
+      }
+    } catch (e){
+      print(e);
+      SnackBarHelper.showErrorSnackBar('An error ocurred: $e');
+      rethrow;
+    }
+
+  }
 
 
 
-  //TODO: should complete updateBrand
+
+  updateBrand() async {
+    try{
+      if(brandForUpdate != null){
+        Map<String, dynamic> brand = {
+          'name': brandNameCtrl.text,
+          'subcategoryId': selectedSubCategory?.sId,
+
+        };
+
+        final response = await service.updateItem(endpointUrl: 'brands', itemData: brand, itemId: brandForUpdate?.sId ?? '');
+
+        if(response.isOk){
+          ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+
+          if(apiResponse.success == true){
+            clearFields();
+            SnackBarHelper.showSuccessSnackBar('${apiResponse.message}');
+            _dataProvider.getAllBrands();
+            log('Brand Updated Sucessfully');
+          }else {
+            SnackBarHelper.showErrorSnackBar(
+                'Failed to update Brand: ${apiResponse.message}');
+          }
+        }else{
+          SnackBarHelper.showErrorSnackBar('Error ${response.body?['message'] ?? response.statusText}');
+        }
+      }
+    } catch (e){
+      print(e);
+      SnackBarHelper.showErrorSnackBar('An error ocurred: $e');
+      rethrow;
+    }
+
+  }
 
 
-  //TODO: should complete submitBrand
+  submitBrand() {
+    if(brandForUpdate != null){
+      updateBrand();
+    }else{
+      addBrand();
+    }
+  }
 
+  deleteBrand(Brand brand) async {
 
+    try{
+      Response response = await service.deleteItem(
+          endpointUrl: 'brands', itemId: brand.sId ?? '');
 
-  //TODO: should complete deleteBrand
+      if (response.isOk) {
+        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        if (apiResponse.success == true) {
+          SnackBarHelper.showSuccessSnackBar("Brand Deleted Sucessfully");
+          _dataProvider.getAllBrands();
+        }
+        else {
+          SnackBarHelper.showErrorSnackBar(
+              'Error ${response.body?['message'] ?? response.statusText}');
+        }
+      }
+    }catch (e){
+      print(e);
+      rethrow;
+    }
+
+  }
 
   //? set data for update on editing
   setDataForUpdateBrand(Brand? brand) {
