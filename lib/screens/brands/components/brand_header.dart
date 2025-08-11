@@ -11,17 +11,21 @@ class BrandHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
-        Text(
-          "Brands",
-          style: Theme.of(context).textTheme.titleLarge,
+      children:  [
+        Text("Brands",
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.blueGrey [900],
+          ),
         ),
         Spacer(flex: 2),
-        Expanded(child: SearchField(
-          onChange: (val) {
-            context.dataProvider.filterBrands(val);
-          },
-        )),
+        Expanded(
+          child: SearchField(
+            onChange: (val) {
+              context.dataProvider.filterBrands(val);
+            },
+          ),
+        ),
         ProfileCard()
       ],
     );
@@ -42,26 +46,33 @@ class ProfileCard extends StatelessWidget {
         vertical: defaultPadding / 2,
       ),
       decoration: BoxDecoration(
-        color: secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        border: Border.all(color: Colors.white10),
+        color: Colors.blue.shade50,
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
+        border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
       ),
       child: Row(
-        children: [
-          Image.asset(
-            "assets/images/profile_pic.png",
-            height: 38,
+        children:  [
+          CircleAvatar(
+            backgroundImage: AssetImage("assets/images/profile_pic.png"),
+            radius: 18,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-            child: Text("Angelina Jolie"),
+            child: Text(
+              "Yasmin Momade",
+              style: TextStyle(
+                color: Colors.blueGrey [900],
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
-          Icon(Icons.keyboard_arrow_down),
+          Icon(Icons.keyboard_arrow_down, color: Colors.blueGrey [700]),
         ],
       ),
     );
   }
 }
+
 
 class SearchField extends StatelessWidget {
   final Function(String) onChange;
@@ -76,22 +87,28 @@ class SearchField extends StatelessWidget {
     return TextField(
       decoration: InputDecoration(
         hintText: "Search",
-        fillColor: secondaryColor,
+        fillColor: Colors.white,
         filled: true,
+        hintStyle: TextStyle(color: Colors.grey [600]),
         border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          borderSide: BorderSide(color: Colors.blueGrey.shade100),
+          borderRadius: const BorderRadius.all(Radius.circular(12)),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blueGrey.shade100),
+          borderRadius: BorderRadius.circular(12),
+        ),
+
         suffixIcon: InkWell(
           onTap: () {},
           child: Container(
-            padding: EdgeInsets.all(defaultPadding * 0.75),
+            padding: EdgeInsets.all(defaultPadding  * 0.75),
             margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
             decoration: BoxDecoration(
-              color: primaryColor,
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: Colors.blue,
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: SvgPicture.asset("assets/icons/Search.svg"),
+            child: SvgPicture.asset("assets/icons/Search.svg", color: Colors.white),
           ),
         ),
       ),
