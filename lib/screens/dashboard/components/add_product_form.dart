@@ -175,7 +175,7 @@ class ProductSubmitForm extends StatelessWidget {
                         displayItem: (SubCategory? subCategory) => subCategory?.name ?? '',
                         onChanged: (newValue) {
                           if (newValue != null) {
-                            //TODO: should complete call filterBrand
+                            context.dashBoardProvider.filterBrand(newValue);
                           }
                         },
                         validator: (value) {

@@ -41,11 +41,7 @@ class DashBoardProvider extends ChangeNotifier {
   List<Brand> brandsBySubCategory = [];
   List<String> variantsByVariantType = [];
 
-
   DashBoardProvider(this._dataProvider);
-
-  //TODO: should complete addProduct
-
 
   addProduct() async{
 
@@ -66,9 +62,6 @@ class DashBoardProvider extends ChangeNotifier {
         'quantity': productQntCtrl.text,
         'proVariantTypeId': selectedVariantType?.sId ?? '',
         'proVariantId': selectedVariants,
-
-
-        'image': 'no_data',
       };
 
       final FormData form = await
@@ -180,7 +173,15 @@ class DashBoardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //TODO: should complete filterBrand
+  filterBrand (SubCategory subCategory) {
+    selectedBrand = null;
+    selectedSubCategory = subCategory;
+    brandsBySubCategory.clear();
+    final newList = _dataProvider.brands.where((brand) =>
+    brand.subcategoryId?.sId == subCategory.sId).toList();
+    brandsBySubCategory = newList;
+    notifyListeners();
+  }
 
   //TODO: should complete filterVariant
 
