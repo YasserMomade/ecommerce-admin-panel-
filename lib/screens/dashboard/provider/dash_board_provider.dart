@@ -1,4 +1,6 @@
+import 'dart:developer';
 import 'dart:io';
+import '../../../models/api_response.dart';
 import '../../../models/brand.dart';
 import '../../../models/sub_category.dart';
 import '../../../models/variant_type.dart';
@@ -10,6 +12,7 @@ import '../../../core/data/data_provider.dart';
 import '../../../models/category.dart';
 import '../../../services/http_services.dart';
 import '../../../models/product.dart';
+import '../../../utility/snack_bar_helper.dart';
 
 class DashBoardProvider extends ChangeNotifier {
   HttpService service = HttpService();
@@ -42,6 +45,66 @@ class DashBoardProvider extends ChangeNotifier {
   DashBoardProvider(this._dataProvider);
 
   //TODO: should complete addProduct
+
+
+  addProduct() async{
+
+    try {
+      if(selectedMainImage == null){
+        SnackBarHelper.showErrorSnackBar("Please choose a Image");
+        return;
+      }
+
+      Map<String, dynamic> formDataMap = {
+        'name': productNameCtrl.text,
+        'description': productDescCtrl.text,
+        'proCategoryId': selectedCategory?.sId ??  '',
+        'proSubCategoryId': selectedSubCategory?.sId ??  '',
+        'proBrandId': selectedBrand?.sId ??  '',
+        'price': productPriceCtrl.text,
+        'offerPrice': productOffPriceCtrl.text.isEmpty ? productPriceCtrl.text : productOffPriceCtrl.text,
+        'quantity': productQntCtrl.text,
+        'proVariantTypeId': selectedVariantType?.sId ?? '',
+        'proVariantId': selectedVariants,
+
+
+        'image': 'no_data',
+      };
+
+      final FormData form = await
+      createFormDataForMultipleImage(imgXFiles: [
+          {'image1': mainImgXFile},
+          {'image2': secondImgXFile},
+          {'image1': thirdImgXFile},
+          {'image4': fourthImgXFile},
+          {'image5': fifthImgXFile},
+          ], formData: formDataMap);
+      if(productForUpdate != null){}
+
+      final response = await service.addItem(endpointUrl: 'products', itemData: form);
+
+      if(response.isOk){
+        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+
+        if(apiResponse.success == true){
+          clearFields();
+          SnackBarHelper.showSuccessSnackBar('${apiResponse.message}');
+          log('Product added');
+          clearFields();
+        }else {
+          SnackBarHelper.showErrorSnackBar(
+              'Failed to add Product: ${apiResponse.message}');
+        }
+      }else{
+        SnackBarHelper.showErrorSnackBar('Error ${response.body?['message'] ?? response.statusText}');
+      }
+    } catch (e){
+      print(e);
+      SnackBarHelper.showErrorSnackBar('An error ocurred: $e');
+      rethrow;
+    }
+
+  }
 
   //TODO: should complete updateProduct
 
@@ -106,7 +169,16 @@ class DashBoardProvider extends ChangeNotifier {
   }
 
 
-  //TODO: should complete filterSubcategory
+  filterSubcategory (Category category) {
+    selectedSubCategory = null;
+    selectedBrand = null;
+    selectedCategory = category;
+    subCategoriesByCategory.clear();
+    final newList = _dataProvider.subCategories.where((subcategory) =>
+    subcategory.categoryId?.sId == category.sId).toList();
+    subCategoriesByCategory = newList;
+    notifyListeners();
+  }
 
   //TODO: should complete filterBrand
 
