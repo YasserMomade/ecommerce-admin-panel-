@@ -1,4 +1,5 @@
 import 'package:admin/utility/extensions.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/data/data_provider.dart';
 import 'package:flutter/material.dart';
@@ -115,6 +116,28 @@ class CategoryListSection extends StatelessWidget {
         required VoidCallback onEdit,
         required VoidCallback onDelete,
       }) {
+
+    // ---- Formatação da data + hora ----
+    String createdAtStr = '';
+    final createdAtVal = category.createdAt;
+
+    if (createdAtVal == null) {
+      createdAtStr = '';
+    } else if (createdAtVal is DateTime) {
+      createdAtStr = DateFormat('dd/MM/yyyy HH:mm')
+          .format((createdAtVal as DateTime).toLocal());
+    } else if (createdAtVal is int) {
+      createdAtStr = DateFormat('dd/MM/yyyy HH:mm')
+          .format(DateTime.fromMillisecondsSinceEpoch(createdAtVal as int).toLocal());
+    } else {
+      final parsed = DateTime.tryParse(createdAtVal.toString());
+      if (parsed != null) {
+        createdAtStr = DateFormat('dd/MM/yyyy HH:mm').format(parsed.toLocal());
+      } else {
+        createdAtStr = createdAtVal.toString();
+      }
+    }
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -163,7 +186,7 @@ class CategoryListSection extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
-              category.createdAt ?? '',
+              createdAtStr,
               style: const TextStyle(color: Colors.black54),
             ),
           ),
@@ -189,4 +212,14 @@ class CategoryListSection extends StatelessWidget {
       ),
     );
   }
+  DateTime? _parseDate(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value.toLocal();
+    if (value is int) {
+      return DateTime.fromMillisecondsSinceEpoch(value).toLocal();
+    }
+    final parsed = DateTime.tryParse(value.toString());
+    return parsed?.toLocal();
+  }
+
 }

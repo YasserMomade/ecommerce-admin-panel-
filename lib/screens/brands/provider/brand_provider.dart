@@ -19,13 +19,7 @@ class BrandProvider extends ChangeNotifier {
   SubCategory? selectedSubCategory;
   Brand? brandForUpdate;
 
-
-
-
   BrandProvider(this._dataProvider);
-
-
-
 
   addBrand() async{
 

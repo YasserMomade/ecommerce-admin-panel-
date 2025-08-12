@@ -66,6 +66,7 @@ class DataProvider extends ChangeNotifier {
     getAllSubcategory();
     getAllBrands();
     getAllVariantType();
+    getAllvariant();
   }
 
 
@@ -230,11 +231,41 @@ class DataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //TODO: should complete getAllVariant
+  Future<List<Variant>>  getAllvariant({bool showSnack = false}) async{
 
+    try{
+      Response response = await service.getItems(endpointUrl: 'variants');
 
-  //TODO: should complete filterVariants
+      if(response.isOk){
+        ApiResponse<List<Variant>> apiResponse = ApiResponse<List<Variant>>.fromJson(
+          response.body,
+              (json) => (json as List).map((item) => Variant.fromJson(item)).toList(),
+        );
+        _allVariants = apiResponse.data ?? [];
+        _filteredVariants = List.from(_allVariants);
+        notifyListeners();
+        if(showSnack) SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+      }
+    } catch(e){
+      if (showSnack) SnackBarHelper.showErrorSnackBar(e.toString());
+      rethrow;
+    }
+    return _filteredVariants;
+  }
 
+  //filterVariants
+  void filterVariants(String keyword) {
+
+    if(keyword.isEmpty){
+      _filteredVariants = List.from(_allVariants);
+    }else{
+      final loweKeyword = keyword.toLowerCase();
+      _filteredVariants = _allVariants.where((variant){
+        return (variant.name ?? '').toLowerCase().contains(loweKeyword);
+      }).toList();
+    }
+    notifyListeners();
+  }
 
   //TODO: should complete getAllProduct
 
