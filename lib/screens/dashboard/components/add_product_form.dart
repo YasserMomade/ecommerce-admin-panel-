@@ -267,7 +267,7 @@ class ProductSubmitForm extends StatelessWidget {
                           displayItem: (VariantType? variantType) => variantType?.name ?? '',
                           onChanged: (newValue) {
                             if (newValue != null) {
-                              //TODO: should complete call filterVariant
+                              context.dashBoardProvider.filterVariant(newValue);
                             }
                           },
                           hintText: 'Select Variant type',
@@ -318,7 +318,7 @@ class ProductSubmitForm extends StatelessWidget {
                       // Validate and save the form
                       if (context.dashBoardProvider.addProductFormKey.currentState!.validate()) {
                         context.dashBoardProvider.addProductFormKey.currentState!.save();
-                        //TODO: should complete call submitProduct
+                        context.dashBoardProvider.addProduct();
                         Navigator.of(context).pop();
                       }
                     },

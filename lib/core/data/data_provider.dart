@@ -67,6 +67,7 @@ class DataProvider extends ChangeNotifier {
     getAllBrands();
     getAllVariantType();
     getAllvariant();
+    getAllProduct();
   }
 
 
@@ -267,10 +268,43 @@ class DataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //TODO: should complete getAllProduct
+  //getAllProduct
 
+  Future<List<Product>>  getAllProduct({bool showSnack = false}) async{
 
-  //TODO: should complete filterProducts
+    try{
+      Response response = await service.getItems(endpointUrl: 'products');
+
+      if(response.isOk){
+        ApiResponse<List<Product>> apiResponse = ApiResponse<List<Product>>.fromJson(
+          response.body,
+              (json) => (json as List).map((item) => Product.fromJson(item)).toList(),
+        );
+        _allProducts= apiResponse.data ?? [];
+        _filteredProducts = List.from(_allProducts);
+        notifyListeners();
+        if(showSnack) SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+      }
+    } catch(e){
+      if (showSnack) SnackBarHelper.showErrorSnackBar(e.toString());
+      rethrow;
+    }
+    return _filteredProducts;
+  }
+
+  //filterProducts
+  void filterProducts(String keyword) {
+
+    if(keyword.isEmpty){
+      _filteredProducts = List.from(_allProducts);
+    }else{
+      final loweKeyword = keyword.toLowerCase();
+      _filteredProducts = _allProducts.where((product){
+        return (product.name ?? '').toLowerCase().contains(loweKeyword);
+      }).toList();
+    }
+    notifyListeners();
+  }
 
 
   //TODO: should complete getAllCoupons
