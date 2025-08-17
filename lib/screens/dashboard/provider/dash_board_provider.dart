@@ -82,6 +82,7 @@ class DashBoardProvider extends ChangeNotifier {
         if(apiResponse.success == true){
           clearFields();
           SnackBarHelper.showSuccessSnackBar('${apiResponse.message}');
+          _dataProvider.getAllProduct();
           log('Product added');
           clearFields();
         }else {
@@ -99,15 +100,88 @@ class DashBoardProvider extends ChangeNotifier {
 
   }
 
-  //TODO: should complete updateProduct
 
+  updateProduct()async {
+try{
+  Map<String, dynamic> formDataMap = {
+    'name': productNameCtrl.text,
+    'description': productDescCtrl.text,
+    'proCategoryId': selectedCategory?.sId ??  '',
+    'proSubCategoryId': selectedSubCategory?.sId ??  '',
+    'proBrandId': selectedBrand?.sId ??  '',
+    'price': productPriceCtrl.text,
+    'offerPrice': productOffPriceCtrl.text.isEmpty ? productPriceCtrl.text : productOffPriceCtrl.text,
+    'quantity': productQntCtrl.text,
+    'proVariantTypeId': selectedVariantType?.sId ?? '',
+    'proVariantId': selectedVariants,
+  };
 
-  //TODO: should complete submitProduct
+  final FormData form = await
+  createFormDataForMultipleImage(imgXFiles: [
+  {'image1': mainImgXFile},
+  {'image2': secondImgXFile},
+  {'image1': thirdImgXFile},
+  {'image4': fourthImgXFile},
+  {'image5': fifthImgXFile},
+  ], formData: formDataMap);
+  if(productForUpdate != null){}
 
+  final response = await service.updateItem(endpointUrl: 'products', itemData: form, itemId: '${productForUpdate?.sId}');
 
-  //TODO: should complete deleteProduct
+  if(response.isOk){
+  ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
 
+  if(apiResponse.success == true){
+  clearFields();
+  SnackBarHelper.showSuccessSnackBar('${apiResponse.message}');
+  _dataProvider.getAllProduct();
+  log('Product Updated');
+  clearFields();
+  }else {
+  SnackBarHelper.showErrorSnackBar(
+  'Failed to Update Product: ${apiResponse.message}');
+  }
+  }else{
+  SnackBarHelper.showErrorSnackBar('Error ${response.body?['message'] ?? response.statusText}');
+  }
+} catch (e){
+print(e);
+SnackBarHelper.showErrorSnackBar('An error ocurred: $e');
+rethrow;
+}
+}
 
+  submitProduct(){
+    if(productForUpdate != null) {
+      updateProduct();
+    }else{
+      addProduct();
+    }
+  }
+
+  deleteProduct(Product product) async {
+
+    try{
+      Response response = await service.deleteItem(
+          endpointUrl: 'products', itemId: product.sId ?? '');
+
+      if (response.isOk) {
+        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        if (apiResponse.success == true) {
+          SnackBarHelper.showSuccessSnackBar("product Deleted Sucessfully");
+          _dataProvider.getAllProduct();
+        }
+        else {
+          SnackBarHelper.showErrorSnackBar(
+              'Error ${response.body?['message'] ?? response.statusText}');
+        }
+      }
+    }catch (e){
+      print(e);
+      rethrow;
+    }
+
+  }
 
   void pickImage({required int imageCardNumber}) async {
     final ImagePicker picker = ImagePicker();

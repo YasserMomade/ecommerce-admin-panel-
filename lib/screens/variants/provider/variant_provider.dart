@@ -118,7 +118,6 @@ class VariantsProvider extends ChangeNotifier {
       print(e);
       rethrow;
     }
-
   }
   setDataForUpdateVariant(Variant? variant) {
     if (variant != null) {

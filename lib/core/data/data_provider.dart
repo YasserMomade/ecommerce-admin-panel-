@@ -62,12 +62,13 @@ class DataProvider extends ChangeNotifier {
   List<MyNotification> get notifications => _filteredNotifications;
 
   DataProvider() {
+    getAllProduct();
     getAllcategory();
     getAllSubcategory();
     getAllBrands();
     getAllVariantType();
     getAllvariant();
-    getAllProduct();
+    getAllPosters();
   }
 
 
@@ -299,8 +300,18 @@ class DataProvider extends ChangeNotifier {
       _filteredProducts = List.from(_allProducts);
     }else{
       final loweKeyword = keyword.toLowerCase();
+
+
       _filteredProducts = _allProducts.where((product){
-        return (product.name ?? '').toLowerCase().contains(loweKeyword);
+
+        final productNameContainsKeyword =
+        (product.name ?? '').toLowerCase().contains(loweKeyword);
+        final categoryNameContainsKeyword =
+            product.proCategoryId?.name?.toLowerCase().contains(loweKeyword) ?? false;
+        final subCategoryNameContainsKeyword =
+            product.proSubCategoryId?.name?.toLowerCase().contains(loweKeyword) ?? false;
+
+        return productNameContainsKeyword || categoryNameContainsKeyword || subCategoryNameContainsKeyword;
       }).toList();
     }
     notifyListeners();
@@ -312,11 +323,46 @@ class DataProvider extends ChangeNotifier {
 
   //TODO: should complete filterCoupons
 
+ //getAllPosters
 
-  //TODO: should complete getAllPosters
+  Future<List<Poster>> getAllPosters({bool showSnack = false}) async{
 
+    try{
+      Response response = await service.getItems(endpointUrl: 'posters');
 
-  //TODO: should complete filterPosters
+      if(response.isOk){
+        ApiResponse<List<Poster>> apiResponse = ApiResponse<List<Poster>>.fromJson(
+          response.body,
+              (json) => (json as List).map((item) => Poster.fromJson(item)).toList(),
+        );
+        _allPosters = apiResponse.data ?? [];
+        _filteredPosters = List.from(_allPosters);
+        notifyListeners();
+        if(showSnack) SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+      }
+
+    } catch(e){
+      if (showSnack) SnackBarHelper.showErrorSnackBar(e.toString());
+      rethrow;
+    }
+
+    return _filteredPosters;
+
+  }
+  //filterPosters
+
+  void filterPosters(String keyword) {
+
+    if(keyword.isEmpty){
+      _filteredPosters = List.from(_allPosters);
+    }else{
+      final loweKeyword = keyword.toLowerCase();
+      _filteredPosters = _allPosters.where((poster){
+        return (poster.posterName ?? '').toLowerCase().contains(loweKeyword);
+      }).toList();
+    }
+    notifyListeners();
+  }
 
 
   //TODO: should complete getAllNotifications
@@ -330,16 +376,51 @@ class DataProvider extends ChangeNotifier {
 
   //TODO: should complete filterOrders
 
-
-
-
   //TODO: should complete calculateOrdersWithStatus
 
 
-  //TODO: should complete filterProductsByQuantity
+  // filterProductsByQuantity
 
+  void  filterProductsByQuantity(String productQntType) {
 
-  //TODO: should complete calculateProductWithQuantity
+    if(productQntType == 'All product'){
+      _filteredProducts = List.from(_allProducts);
+    }
+    else if (productQntType == 'Out of Stock'){
+      _filteredProducts = _allProducts.where((product) {
+        return product.quantity != null && product.quantity == 0;
+      }).toList();
+    }
+    else if (productQntType == 'Limited Stock') {
+      _filteredProducts = _allProducts.where((product) {
+        return product.quantity != null && product.quantity == 1;
+      }).toList();
+    }
+    else if (productQntType == 'Other Stock'){
+      _filteredProducts = _allProducts.where((product) {
+        return product.quantity != null && product.quantity != 0 && product.quantity != 1;
+      }).toList();
+    }else{
+      _filteredProducts = List.from(_allProducts);
+    }
+    notifyListeners();
+  }
 
+  //calculateProductWithQuantity
+
+int calculateProductWithQuantity({int? quantity }) {
+  int totalProduct = 0;
+
+  if (quantity == null) {
+    totalProduct = _allProducts.length;
+  }else{
+    for(Product product in _allProducts) {
+      if(product.quantity != null && product.quantity == quantity){
+        totalProduct += 1;
+      }
+    }
+  }
+  return totalProduct;
+}
 
 }
