@@ -93,7 +93,6 @@ class BrandProvider extends ChangeNotifier {
 
   }
 
-
   submitBrand() {
     if(brandForUpdate != null){
       updateBrand();
